@@ -10,6 +10,7 @@ RUN sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/s
 
 # Create `ansible` user with sudo permissions
 ENV ANSIBLE_USER=ansible SUDO_GROUP=wheel
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -xe \
   && groupadd -r ${ANSIBLE_USER} \
   && useradd -m -g ${ANSIBLE_USER} ${ANSIBLE_USER} \
