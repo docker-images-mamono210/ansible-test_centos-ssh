@@ -1,12 +1,13 @@
-FROM centos:7
+FROM quay.io/centos/centos:stream9
 
-RUN yum -y update \
-  && yum clean all \
-  && yum -y install openssh-server openssh-clients sudo
+# Install requirements
+RUN dnf clean all \
+  && dnf update -y \
+  && dnf install -y openssh-server openssh-clients sudo
 
 RUN sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config \
-  && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ""
-
+  && ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N "" \
+  && rm -f /var/run/nologin
 
 # Create `ansible` user with sudo permissions
 ENV ANSIBLE_USER=ansible SUDO_GROUP=wheel

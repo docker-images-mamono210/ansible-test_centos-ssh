@@ -41,6 +41,9 @@ jobs:
 
   github-container-registory:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base-image: [centos7, centos-stream8, centos-stream9]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -61,12 +64,15 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          file: Dockerfile
+          file: ${{ matrix.base-image }}/Dockerfile
           push: true
-          tags: ghcr.io/docker-images-mamono210/ansible-test/centos7-ssh:latest
+          tags: ghcr.io/docker-images-mamono210/ansible-test/${{ matrix.base-image }}-ssh:latest
 
   hadolint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base-image: [centos7, centos-stream8, centos-stream9]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -74,7 +80,7 @@ jobs:
       - name: Dockerfile lint
         uses: brpaz/hadolint-action@eb9b96be611b84830aa1babacfb7070ecd2a8b1b
         with:
-          dockerfile: Dockerfile
+          dockerfile: ${{ matrix.base-image }}/Dockerfile
 
   find-trailing-whitespace:
     name: Find Trailing Whitespace
